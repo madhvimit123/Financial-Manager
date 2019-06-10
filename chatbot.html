@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        know = {
+            "hi":"hello",
+            "hello" : "hi",
+            "how are you?" : "good",
+            "ok" : ":)"
+        };
+        var balance=0;
+        var history={};
+        localStorage.setItem("Balance",balance);
+        function talk() {
+            var user = document.getElementById("userBox").value;
+            var arr= user.split(" ");
+            document.getElementById("userBox").value = "";
+            document.getElementById("chatLog").innerHTML += user+"<br>";
+            if (user in know) {
+                document.getElementById("chatLog").innerHTML += know[user]+"<br>";
+            }
+            else  if(arr[0]=='Received'){
+                balance=localStorage.getItem("Balance");
+                balance=parseInt(balance)+parseInt(arr[1]);
+                
+                localStorage.setItem("Balance",balance);
+                console.log(localStorage.getItem("Balance"));
+            }
+            else if(arr[0]=='Spend'){
+                var where=arr[3];
+
+                balance=parseInt(localStorage.getItem("Balance"));
+                if(balance>=arr[1]){
+              
+                balance=(balance)-parseInt(arr[1]);
+
+                localStorage.setItem("Balance",balance);
+                var bal=localStorage.getItem("Balance");
+                document.getElementById("chatLog").innerHTML += "Remaining balance is "+bal +"<br>";
+                history[where+" debit"]=arr[1];
+    
+                localStorage.setItem("history",history);
+                }
+                else{
+                    document.getElementById("chatLog").innerHTML += "Sorry you are out of Balance!!<br>";
+                }
+
+            }
+            else if(arr[0]=='show' && arr[1]=='balance'){
+                balance=localStorage.getItem("Balance");
+               // console.log("ghsdhfg"+balance);
+                document.getElementById("chatLog").innerHTML += "Your balance is "+balance +"<br>";
+            }
+             else if(arr[0]=='show' && arr[1]=='history'){
+                    history=localStorage.getItem("history");
+                    for( var key in history){
+                        // document.getElementById("chatLog").innerHTML +=key+ " "+ value+"<br>";
+                        console.log(key,history[key]);
+                    }
+                   
+                }
+             else {
+                document.getElementById("chatLog").innerHTML += "Sorry, I didn't get that<br>";
+            }
+        } 
+    </script>  
+</head>
+  <body>
+    <div id="wrapper">
+      <div id="chat-area">
+        <div id='start-screen'>
+            <p id="chatLog"></p>
+            <input id="userBox" type="text" onkeydown="if (event.keyCode == 13) {talk()}">
+         
+        </div>
+      </div>
+      <div id="compose-area">
+        <textarea id="composer" class='text-input' type='text' autofocus='autofocus'></textarea>
+        <div id="sendButton">
+          <button>&nbsp;↵&nbsp;</button>
+        </div>
+      </div>
+      
+    </div>
+    <!--scripts go here-->
+  </body>
+</html>
